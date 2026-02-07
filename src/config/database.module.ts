@@ -1,0 +1,25 @@
+import { Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Attendance } from 'src/entities/attendance.entity';
+import { Employee } from 'src/entities/employee.entity';
+import { HrUser } from 'src/entities/hrUser.entity';
+
+@Module({
+  imports: [
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get<string>('database.host'),
+        port: configService.get<number>('database.port') || 5432,
+        username: configService.get<string>('database.username'),
+        password: configService.get<string>('database.password'),
+        database: configService.get<string>('database.name'),
+        entities: [HrUser, Employee, Attendance],
+        synchronize: configService.get<string>('app.env') === 'development',
+      }),
+    }),
+  ],
+})
+export class DatabaseModule {}
