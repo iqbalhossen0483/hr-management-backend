@@ -5,8 +5,10 @@ import {
   HttpStatus,
   Post,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import type { Response } from 'express';
+import { AuthGuard } from 'src/guards/Auth.guard';
 import { CreateHrUserDto, LoginHrUserDto } from './hrUser.dto';
 import { HrUserService } from './hrUser.service';
 
@@ -14,6 +16,7 @@ import { HrUserService } from './hrUser.service';
 export class HrUserController {
   constructor(private readonly hrUserService: HrUserService) {}
 
+  @UseGuards(AuthGuard)
   @Post('/create')
   @HttpCode(HttpStatus.CREATED)
   createhrUser(@Body() payload: CreateHrUserDto) {

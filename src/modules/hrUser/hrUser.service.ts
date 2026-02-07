@@ -6,7 +6,7 @@ import * as bcrypt from 'bcryptjs';
 import { Response } from 'express';
 import { StringValue } from 'ms';
 import { HrUser } from 'src/entities/hrUser.entity';
-import { AuthResponseType, ResponseType } from 'src/type/common';
+import { AuthResponseType, JWTPayload, ResponseType } from 'src/type/common';
 import { Repository } from 'typeorm';
 import { CreateHrUserDto, LoginHrUserDto } from './hrUser.dto';
 
@@ -58,7 +58,7 @@ export class HrUserService {
   }
 
   generateRefreshToken(hrUser: HrUser): string {
-    const payload = { sub: hrUser.id, email: hrUser.email };
+    const payload: JWTPayload = { sub: hrUser.id, email: hrUser.email };
     const refreshTokenSecret =
       this.configService.get<string>('jwt.refreshSecret');
     const expiresIn =

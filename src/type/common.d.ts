@@ -17,3 +17,8 @@ export interface PaginatedResponseType<T> extends ResponseType<T> {
     total_pages: number;
   };
 }
+
+export type JWTPayload = {
+  sub: number;
+  email: string;
+};
