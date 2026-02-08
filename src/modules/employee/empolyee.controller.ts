@@ -12,6 +12,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { multerConfig } from 'src/config/multer.config';
 import { CurrentUser } from 'src/decorators/CurrentUser';
 import { AuthGuard } from 'src/guards/Auth.guard';
 import type { JWTPayload } from 'src/type/common';
@@ -24,7 +25,7 @@ export class EmployeeController {
   constructor(private readonly employeeService: EmployeeService) {}
 
   @Post('/create')
-  @UseInterceptors(FileInterceptor('photo'))
+  @UseInterceptors(FileInterceptor('photo', multerConfig))
   createEmployee(
     @Body() payload: CreateEmployeeDto,
     @UploadedFile() file: Express.Multer.File,
@@ -33,7 +34,7 @@ export class EmployeeController {
   }
 
   @Put('/update/:id')
-  @UseInterceptors(FileInterceptor('photo'))
+  @UseInterceptors(FileInterceptor('photo', multerConfig))
   updateEmployee(
     @Body() payload: Partial<CreateEmployeeDto>,
     @Param('id') id: number,

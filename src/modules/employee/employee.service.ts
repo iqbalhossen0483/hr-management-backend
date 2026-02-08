@@ -20,33 +20,12 @@ export class EmployeeService {
 
   private uploadPath = path.join(process.cwd(), 'uploads');
 
-  saveFile(
-    file: Express.Multer.File,
-    oldFilePath?: string | null,
-  ): string | null {
-    if (!file) return null;
-
-    if (oldFilePath) {
-      const oldFileFullPath = path.join(this.uploadPath, oldFilePath);
-      if (fs.existsSync(oldFileFullPath)) {
-        fs.unlinkSync(oldFileFullPath);
-      }
+  removeFile(file: string) {
+    try {
+      fs.unlinkSync(path.join(this.uploadPath, file));
+    } catch (error) {
+      console.error(error);
     }
-
-    // check if uploads directory exists, if not create it
-    if (!fs.existsSync(this.uploadPath)) {
-      fs.mkdirSync(this.uploadPath);
-    }
-
-    // generate unique filename
-    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-    const extension = path.extname(file.originalname);
-    const filename = `${uniqueSuffix}${extension}`;
-
-    const filePath = path.join(this.uploadPath, filename);
-    fs.writeFileSync(filePath, file.buffer);
-
-    return filename;
   }
 
   async createEmployee(
@@ -62,13 +41,13 @@ export class EmployeeService {
     });
 
     if (isExistEmployee) {
+      if (file) this.removeFile(file.filename);
       throw new ConflictException(
         'Employee with the same name, date of birth, and hiring date already exists',
       );
     }
 
-    const photo_path = this.saveFile(file);
-    payload.photo_path = photo_path;
+    if (file) payload.photo_path = `/${file.path}`;
 
     const employee = this.employeeRepository.create(payload);
     const savedEmployee = await this.employeeRepository.save(employee);
@@ -100,7 +79,9 @@ export class EmployeeService {
     const employee = await this.getEmployeeById(id);
 
     if (file) {
-      payload.photo_path = this.saveFile(file, employee.photo_path);
+      payload.photo_path = `/${file.path}`;
+      if (employee.photo_path)
+        this.removeFile(employee.photo_path.replace('/uploads/', ''));
     }
 
     Object.assign(employee, payload);
