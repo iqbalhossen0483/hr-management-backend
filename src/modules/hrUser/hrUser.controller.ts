@@ -12,12 +12,12 @@ import { AuthGuard } from 'src/guards/Auth.guard';
 import { CreateHrUserDto, LoginHrUserDto } from './hrUser.dto';
 import { HrUserService } from './hrUser.service';
 
-@Controller('auth/hr-user')
+@Controller('auth')
 export class HrUserController {
   constructor(private readonly hrUserService: HrUserService) {}
 
   @UseGuards(AuthGuard)
-  @Post('/create')
+  @Post('/hr_user/create')
   @HttpCode(HttpStatus.CREATED)
   createhrUser(@Body() payload: CreateHrUserDto) {
     return this.hrUserService.createHrUser(payload);
