@@ -4,6 +4,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import fs from 'fs';
+import path from 'path';
 import { Employee } from 'src/entities/employee.entity';
 import { PaginatedResponseType, ResponseType } from 'src/type/common';
 import { Equal, FindOptionsWhere, Not, Repository } from 'typeorm';
@@ -16,9 +18,41 @@ export class EmployeeService {
     private readonly employeeRepository: Repository<Employee>,
   ) {}
 
+  private uploadPath = path.join(process.cwd(), 'uploads');
+
+  saveFile(file: Express.Multer.File, oldFilePath?: string): string | null {
+    if (!file) return null;
+
+    if (oldFilePath) {
+      const oldFileFullPath = path.join(this.uploadPath, oldFilePath);
+      if (fs.existsSync(oldFileFullPath)) {
+        fs.unlinkSync(oldFileFullPath);
+      }
+    }
+
+    // check if uploads directory exists, if not create it
+    if (!fs.existsSync(this.uploadPath)) {
+      fs.mkdirSync(this.uploadPath);
+    }
+
+    // generate unique filename
+    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+    const extension = path.extname(file.originalname);
+    const filename = `${uniqueSuffix}${extension}`;
+
+    const filePath = path.join(this.uploadPath, filename);
+    fs.writeFileSync(filePath, file.buffer);
+
+    return filename;
+  }
+
   async createEmployee(
     payload: CreateEmployeeDto,
+    file: Express.Multer.File,
   ): Promise<ResponseType<Employee>> {
+    const photo_path = this.saveFile(file);
+    payload.photo_path = photo_path;
+
     const isExistEmployee = await this.employeeRepository.findOne({
       where: {
         name: payload.name,

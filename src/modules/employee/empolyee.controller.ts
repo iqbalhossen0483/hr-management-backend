@@ -7,8 +7,11 @@ import {
   Post,
   Put,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { CurrentUser } from 'src/decorators/CurrentUser';
 import { AuthGuard } from 'src/guards/Auth.guard';
 import type { JWTPayload } from 'src/type/common';
@@ -21,8 +24,12 @@ export class EmployeeController {
   constructor(private readonly employeeService: EmployeeService) {}
 
   @Post('/create')
-  createEmployee(@Body() payload: CreateEmployeeDto) {
-    return this.employeeService.createEmployee(payload);
+  @UseInterceptors(FileInterceptor('photo'))
+  createEmployee(
+    @Body() payload: CreateEmployeeDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.employeeService.createEmployee(payload, file);
   }
 
   @Put('/update/:id')
