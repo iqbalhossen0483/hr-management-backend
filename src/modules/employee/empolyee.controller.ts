@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -38,5 +39,15 @@ export class EmployeeController {
     @CurrentUser() user: JWTPayload,
   ) {
     return this.employeeService.findAllEmployees(user.sub, queries);
+  }
+
+  @Get('/:id')
+  getSingleEmployee(@Param('id') id: number) {
+    return this.employeeService.getSingleEmployee(id);
+  }
+
+  @Delete('/delete/:id')
+  deleteEmployee(@Param('id') id: number, @CurrentUser() user: JWTPayload) {
+    return this.employeeService.softDeleteEmployee(id, user.sub);
   }
 }

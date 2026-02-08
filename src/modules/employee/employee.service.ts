@@ -110,4 +110,33 @@ export class EmployeeService {
       meta,
     };
   }
+
+  async getSingleEmployee(id: number): Promise<ResponseType<Employee>> {
+    const employee = await this.getEmployeeById(id);
+
+    return {
+      success: true,
+      message: 'Employee retrieved successfully',
+      data: employee,
+    };
+  }
+
+  async softDeleteEmployee(
+    id: number,
+    currentUserId: number,
+  ): Promise<ResponseType<null>> {
+    const employee = await this.getEmployeeById(id);
+
+    if (employee.id === currentUserId) {
+      throw new ConflictException('You cannot delete yourself');
+    }
+
+    await this.employeeRepository.softRemove(employee);
+
+    return {
+      success: true,
+      message: 'Employee deleted successfully',
+      data: null,
+    };
+  }
 }
