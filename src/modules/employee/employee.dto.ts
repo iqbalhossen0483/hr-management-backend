@@ -37,3 +37,24 @@ export class CreateEmployeeDto {
   @IsOptional()
   photo_path?: string | null;
 }
+
+export class EmployeeQueryDto {
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber({}, { message: 'Page must be a number' })
+  page?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber({}, { message: 'Limit must be a number' })
+  limit?: number;
+
+  @IsOptional()
+  @Type(() => String)
+  @IsNotEmpty({ message: 'Name query cannot be empty' })
+  name?: string;
+
+  @IsOptional()
+  @IsEnum(Designation, { message: 'Designation must be a valid enum value' })
+  designation?: Designation;
+}

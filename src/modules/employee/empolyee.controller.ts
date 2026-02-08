@@ -1,6 +1,17 @@
-import { Body, Controller, Param, Post, Put, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
+import { CurrentUser } from 'src/decorators/CurrentUser';
 import { AuthGuard } from 'src/guards/Auth.guard';
-import { CreateEmployeeDto } from './employee.dto';
+import type { JWTPayload } from 'src/type/common';
+import { CreateEmployeeDto, EmployeeQueryDto } from './employee.dto';
 import { EmployeeService } from './employee.service';
 
 @UseGuards(AuthGuard)
@@ -19,5 +30,13 @@ export class EmployeeController {
     @Param('id') id: number,
   ) {
     return this.employeeService.updateEmployee(id, payload);
+  }
+
+  @Get('/all')
+  getAllEmployees(
+    @Query() queries: EmployeeQueryDto,
+    @CurrentUser() user: JWTPayload,
+  ) {
+    return this.employeeService.findAllEmployees(user.sub, queries);
   }
 }

@@ -5,9 +5,9 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Employee } from 'src/entities/employee.entity';
-import { ResponseType } from 'src/type/common';
-import { Repository } from 'typeorm';
-import { CreateEmployeeDto } from './employee.dto';
+import { PaginatedResponseType, ResponseType } from 'src/type/common';
+import { FindOptionsWhere, Not, Repository } from 'typeorm';
+import { CreateEmployeeDto, EmployeeQueryDto } from './employee.dto';
 
 @Injectable()
 export class EmployeeService {
@@ -68,6 +68,46 @@ export class EmployeeService {
       success: true,
       message: 'Employee updated successfully',
       data: updatedEmployee,
+    };
+  }
+
+  async findAllEmployees(
+    currentUserId: number,
+    queries: EmployeeQueryDto,
+  ): Promise<PaginatedResponseType<Employee[]>> {
+    const { page = 1, limit = 10, name, designation } = queries;
+
+    const skip = (page - 1) * limit;
+
+    const query: FindOptionsWhere<Employee> = {};
+
+    // remove current user from the list
+    query.id = Not(currentUserId);
+
+    if (name) query.name = name;
+    if (designation) query.designation = designation;
+
+    const employees = await this.employeeRepository.find({
+      where: query,
+      skip,
+      take: limit,
+    });
+
+    const total_count = await this.employeeRepository.count({ where: query });
+    const total_pages = Math.ceil(total_count / limit);
+
+    const meta = {
+      total_count,
+      current_page: page,
+      per_page: limit,
+      total_pages,
+    };
+
+    return {
+      success: true,
+      message: 'Employees retrieved successfully',
+      data: employees,
+      meta,
     };
   }
 }
