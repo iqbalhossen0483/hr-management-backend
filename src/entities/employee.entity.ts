@@ -46,7 +46,7 @@ export class Employee {
   @Column({ type: 'text', default: null, nullable: true })
   photo_path: string | null;
 
-  @ManyToMany(() => Attendance, (attendance) => attendance.employee_id)
+  @ManyToMany(() => Attendance, (attendance) => attendance.employee)
   attendances: Attendance[];
 
   @CreateDateColumn()

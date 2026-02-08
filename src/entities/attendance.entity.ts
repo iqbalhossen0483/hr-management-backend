@@ -1,6 +1,7 @@
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -11,27 +12,30 @@ import {
 import { Employee } from './employee.entity';
 
 @Entity('attendances')
-@Unique(['employee_id', 'date'])
+@Unique(['employee', 'date'])
 export class Attendance {
   @PrimaryGeneratedColumn()
   id: number;
 
   @ManyToOne(() => Employee, (employee) => employee.attendances)
   @JoinColumn({ name: 'employee_id' })
-  employee_id: Employee;
+  employee: Employee;
 
   @Column({ type: 'date', nullable: false })
   date: Date;
 
-  @Column({ type: 'time', nullable: false })
-  check_in_time: string;
+  @Column({ type: 'timestamp', nullable: false })
+  check_in_time: Date;
 
-  @Column({ type: 'time', nullable: true })
-  check_out_time: string | null;
+  @Column({ type: 'timestamp', nullable: true })
+  check_out_time: Date | null;
 
   @CreateDateColumn()
   created_at: Date;
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @DeleteDateColumn()
+  deleted_at: Date | null;
 }
