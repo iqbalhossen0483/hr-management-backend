@@ -1,5 +1,3 @@
-# HR Management Backend
-
 ## Setup Instructions
 
 1. **Clone the repository**  
@@ -52,5 +50,13 @@
 - **Role Management:** Manage user roles and permissions.
 - **Employee Management:** Add, update, and delete employee records.
 - **Time Tracking:** Monitor employee work hours.
+
+## Seed data
+
+To add seed data, use:
+
+```bash
+   npm run seed
+```
 
 ---
