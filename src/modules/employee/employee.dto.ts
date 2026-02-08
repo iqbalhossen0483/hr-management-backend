@@ -37,33 +37,3 @@ export class CreateEmployeeDto {
   @IsOptional()
   photo_path?: string | null;
 }
-
-export class UpdateEmployeeDto {
-  @IsOptional()
-  @Length(3, 50, { message: 'Name must be between 3 and 50 characters' })
-  name?: string;
-
-  @IsOptional()
-  @Type(() => Number)
-  @IsNumber({}, { message: 'Age must be a number' })
-  age?: number;
-
-  @IsOptional()
-  @IsEnum(Designation, { message: 'Designation must be a valid enum value' })
-  designation?: Designation;
-
-  @IsOptional()
-  @Type(() => Date)
-  hiring_date?: Date;
-
-  @IsOptional()
-  @Type(() => Date)
-  date_of_birth?: Date;
-
-  @IsOptional()
-  @Type(() => Number)
-  salary?: number;
-
-  @IsOptional()
-  photo_path?: string | null;
-}
