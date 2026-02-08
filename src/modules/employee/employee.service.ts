@@ -8,7 +8,7 @@ import fs from 'fs';
 import path from 'path';
 import { Employee } from 'src/entities/employee.entity';
 import { PaginatedResponseType, ResponseType } from 'src/type/common';
-import { Equal, FindOptionsWhere, Not, Repository } from 'typeorm';
+import { Equal, FindOptionsWhere, ILike, Not, Repository } from 'typeorm';
 import { CreateEmployeeDto, EmployeeQueryDto } from './employee.dto';
 
 @Injectable()
@@ -107,7 +107,7 @@ export class EmployeeService {
     // remove current user from the list
     query.id = Not(currentUserId);
 
-    if (name) query.name = name;
+    if (name) query.name = ILike(`%${name}%`);
     if (designation) query.designation = designation;
 
     const employees = await this.employeeRepository.find({
