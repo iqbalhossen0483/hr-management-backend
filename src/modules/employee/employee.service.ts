@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Employee } from 'src/entities/employee.entity';
 import { PaginatedResponseType, ResponseType } from 'src/type/common';
-import { FindOptionsWhere, Not, Repository } from 'typeorm';
+import { Equal, FindOptionsWhere, Not, Repository } from 'typeorm';
 import { CreateEmployeeDto, EmployeeQueryDto } from './employee.dto';
 
 @Injectable()
@@ -22,8 +22,8 @@ export class EmployeeService {
     const isExistEmployee = await this.employeeRepository.findOne({
       where: {
         name: payload.name,
-        date_of_birth: payload.date_of_birth,
-        hiring_date: payload.hiring_date,
+        date_of_birth: Equal(payload.date_of_birth),
+        hiring_date: Equal(payload.hiring_date),
       },
     });
 
