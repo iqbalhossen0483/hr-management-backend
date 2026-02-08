@@ -24,11 +24,11 @@ export class Attendance {
   @Column({ type: 'date', nullable: false })
   date: Date;
 
-  @Column({ type: 'timestamp', nullable: false })
-  check_in_time: Date;
+  @Column({ type: 'time', nullable: false })
+  check_in_time: string;
 
-  @Column({ type: 'timestamp', nullable: true })
-  check_out_time: Date | null;
+  @Column({ type: 'time', nullable: true })
+  check_out_time: string | null;
 
   @CreateDateColumn()
   created_at: Date;

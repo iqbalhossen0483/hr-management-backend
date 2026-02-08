@@ -1,5 +1,12 @@
 import { Type } from 'class-transformer';
-import { IsDate, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
+import {
+  IsDate,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Matches,
+} from 'class-validator';
 
 export class CreateAttendanceDto {
   @IsNotEmpty({ message: 'Employee ID is required' })
@@ -13,14 +20,18 @@ export class CreateAttendanceDto {
   date: Date;
 
   @IsNotEmpty({ message: 'Check-in time is required' })
-  @Type(() => Date)
-  @IsDate({ message: 'Check-in time must be a valid date' })
-  check_in_time: Date;
+  @IsString()
+  @Matches(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/, {
+    message: 'check_in_time must be in HH:MM:SS format (e.g., 09:30:00)',
+  })
+  check_in_time: string;
 
   @IsOptional()
-  @Type(() => Date)
-  @IsDate({ message: 'Check-out time must be a valid date' })
-  check_out_time: Date | null;
+  @IsString()
+  @Matches(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/, {
+    message: 'check_in_time must be in HH:MM:SS format (e.g., 09:30:00)',
+  })
+  check_out_time: string | null;
 }
 
 export class UpdateAttendanceDto {
@@ -30,14 +41,18 @@ export class UpdateAttendanceDto {
   employee_id: number;
 
   @IsOptional()
-  @Type(() => Date)
-  @IsDate({ message: 'Check-out time must be a valid date' })
-  check_out_time: Date;
+  @IsString()
+  @Matches(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/, {
+    message: 'check_in_time must be in HH:MM:SS format (e.g., 09:30:00)',
+  })
+  check_out_time: string;
 
   @IsOptional()
-  @Type(() => Date)
-  @IsDate({ message: 'Check-in time must be a valid date' })
-  check_in_time: Date;
+  @IsString()
+  @Matches(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/, {
+    message: 'check_in_time must be in HH:MM:SS format (e.g., 09:30:00)',
+  })
+  check_in_time: string;
 
   @IsOptional()
   @Type(() => Date)

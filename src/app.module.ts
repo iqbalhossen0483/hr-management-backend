@@ -6,6 +6,7 @@ import { StaticModule } from './config/static.module';
 import { AttendanceModule } from './modules/attendance/attendance.module';
 import { EmployeeModule } from './modules/employee/employee.module';
 import { HrUserModule } from './modules/hrUser/hrUser.module';
+import { ReportModule } from './modules/report/report.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { HrUserModule } from './modules/hrUser/hrUser.module';
     HrUserModule,
     EmployeeModule,
     AttendanceModule,
+    ReportModule,
   ],
 })
 export class AppModule {}
