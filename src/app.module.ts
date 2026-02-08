@@ -3,6 +3,7 @@ import { DatabaseModule } from './config/database.module';
 import { ENVConfigModule } from './config/env-config.module';
 import { JWTConfigModule } from './config/jwt.config.module';
 import { StaticModule } from './config/static.module';
+import { AttendanceModule } from './modules/attendance/attendance.module';
 import { EmployeeModule } from './modules/employee/employee.module';
 import { HrUserModule } from './modules/hrUser/hrUser.module';
 
@@ -14,6 +15,7 @@ import { HrUserModule } from './modules/hrUser/hrUser.module';
     StaticModule,
     HrUserModule,
     EmployeeModule,
+    AttendanceModule,
   ],
 })
 export class AppModule {}
