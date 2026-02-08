@@ -28,12 +28,13 @@ export class AttendanceService {
     const employee = await this.employeeService.getEmployeeById(
       payload.employee_id,
     );
-    const isExistToday = await this.attendanceRepository.findOne({
-      where: {
-        employee: employee,
-        date: Equal(payload.date),
-      },
-    });
+    const isExistToday = await this.attendanceRepository
+      .createQueryBuilder('attendance')
+      .where(
+        'attendance.date = :date AND attendance.employee_id = :employee_id',
+      )
+      .setParameters({ date: payload.date, employee_id: employee.id })
+      .getOne();
 
     if (isExistToday) {
       throw new ConflictException('Attendance for the employee already exists');
