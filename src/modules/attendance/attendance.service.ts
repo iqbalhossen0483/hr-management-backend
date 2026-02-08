@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Attendance } from 'src/entities/attendance.entity';
 import { PaginatedResponseType, ResponseType } from 'src/type/common';
-import { Between, Equal, FindOptionsWhere, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { EmployeeService } from '../employee/employee.service';
 import {
   AttendanceQueryDto,
@@ -106,25 +106,34 @@ export class AttendanceService {
     queries: AttendanceQueryDto,
   ): Promise<PaginatedResponseType<Attendance[]>> {
     const { employee_id, start_date, end_date, page = 1, limit = 10 } = queries;
-    const query: FindOptionsWhere<Attendance> = {};
-    if (employee_id) {
-      const employee = await this.employeeService.getEmployeeById(employee_id);
-      query.employee = employee;
-    }
-    if (start_date && end_date) {
-      query.date = Between(start_date, end_date);
-    }
 
     const skip = (page - 1) * limit;
 
-    const attendances = await this.attendanceRepository.find({
-      where: query,
-      skip,
-      take: limit,
-      relations: ['employee'],
-    });
+    const queryBuilder = this.attendanceRepository
+      .createQueryBuilder('attendance')
+      .leftJoinAndSelect('attendance.employee', 'employee');
 
-    const total_count = await this.attendanceRepository.count({ where: query });
+    if (employee_id) {
+      queryBuilder.andWhere('attendance.employee_id = :employee_id', {
+        employee_id,
+      });
+    }
+
+    if (start_date && end_date) {
+      queryBuilder.andWhere(
+        'attendance.date BETWEEN :start_date AND :end_date',
+        {
+          start_date,
+          end_date,
+        },
+      );
+    }
+
+    const [attendances, total_count] = await queryBuilder
+      .skip(skip)
+      .take(limit)
+      .getManyAndCount();
+
     const total_pages = Math.ceil(total_count / limit);
 
     const meta = {
