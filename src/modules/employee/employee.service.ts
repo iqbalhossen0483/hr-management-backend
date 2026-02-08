@@ -20,7 +20,10 @@ export class EmployeeService {
 
   private uploadPath = path.join(process.cwd(), 'uploads');
 
-  saveFile(file: Express.Multer.File, oldFilePath?: string): string | null {
+  saveFile(
+    file: Express.Multer.File,
+    oldFilePath?: string | null,
+  ): string | null {
     if (!file) return null;
 
     if (oldFilePath) {
@@ -50,9 +53,6 @@ export class EmployeeService {
     payload: CreateEmployeeDto,
     file: Express.Multer.File,
   ): Promise<ResponseType<Employee>> {
-    const photo_path = this.saveFile(file);
-    payload.photo_path = photo_path;
-
     const isExistEmployee = await this.employeeRepository.findOne({
       where: {
         name: payload.name,
@@ -66,6 +66,9 @@ export class EmployeeService {
         'Employee with the same name, date of birth, and hiring date already exists',
       );
     }
+
+    const photo_path = this.saveFile(file);
+    payload.photo_path = photo_path;
 
     const employee = this.employeeRepository.create(payload);
     const savedEmployee = await this.employeeRepository.save(employee);
@@ -92,8 +95,13 @@ export class EmployeeService {
   async updateEmployee(
     id: number,
     payload: Partial<Employee>,
+    file?: Express.Multer.File,
   ): Promise<ResponseType<Employee>> {
     const employee = await this.getEmployeeById(id);
+
+    if (file) {
+      payload.photo_path = this.saveFile(file, employee.photo_path);
+    }
 
     Object.assign(employee, payload);
     const updatedEmployee = await this.employeeRepository.save(employee);

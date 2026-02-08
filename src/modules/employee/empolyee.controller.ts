@@ -33,11 +33,13 @@ export class EmployeeController {
   }
 
   @Put('/update/:id')
+  @UseInterceptors(FileInterceptor('photo'))
   updateEmployee(
     @Body() payload: Partial<CreateEmployeeDto>,
     @Param('id') id: number,
+    @UploadedFile() file?: Express.Multer.File,
   ) {
-    return this.employeeService.updateEmployee(id, payload);
+    return this.employeeService.updateEmployee(id, payload, file);
   }
 
   @Get('/all')
